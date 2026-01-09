@@ -1,6 +1,7 @@
 import requests
 import threading
 import time
+import pytest
 
 BASE_URL = "http://127.0.0.1:8001"
 
