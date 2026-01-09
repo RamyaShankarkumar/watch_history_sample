@@ -1,5 +1,6 @@
 import requests
 import threading
+import time
 
 BASE_URL = "http://127.0.0.1:8001"
 
@@ -87,18 +88,25 @@ def test_watch_extra_field():
 
 
 def test_concurrent_watch_addition():
+    responses = []
+    
     def add_watch(movie_id):
         print(f"Thread started for movie {movie_id}")
         payload = {"user_id": 101, "movie_id": movie_id}
+        start = time.time()
         r = requests.post("http://127.0.0.1:8001/watch", json=payload)
+        end = time.time()
+        responses.append(end - start)
         print(f"Thread finished for movie {movie_id}, status: {r.status_code}")
         assert r.status_code == 200
 
     threads = []
-    for mid in [201, 202, 203]:
-        t = threading.Thread(target=add_watch, args=(mid,))
+    for i in range(50):  # simulate 50 concurrent users
+        t = threading.Thread(target=add_watch, args=(201,))
         threads.append(t)
         t.start()
 
     for t in threads:
         t.join()
+
+    print(f"Average response time: {sum(responses)/len(responses):.2f} seconds")
