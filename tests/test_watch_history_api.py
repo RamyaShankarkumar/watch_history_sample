@@ -102,6 +102,7 @@ def test_concurrent_watch_addition():
 
     threads = []
     for i in range(50):  # simulate 50 concurrent users
+        print(f"Starting thread {i + 1}") 
         t = threading.Thread(target=add_watch, args=(201,))
         threads.append(t)
         t.start()
