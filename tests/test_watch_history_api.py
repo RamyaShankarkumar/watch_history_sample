@@ -86,18 +86,19 @@ def test_watch_extra_field():
     assert response.status_code == 200
 
 
-def add_watch(movie_id):
-    print(f"Thread started for movie {movie_id}")
-    payload = {"user_id": 101, "movie_id": movie_id}
-    r = requests.post("http://127.0.0.1:8001/watch", json=payload)
-    print(f"Thread finished for movie {movie_id}, status: {r.status_code}")
-    assert r.status_code == 200
+def test_concurrent_watch_addition():
+    def add_watch(movie_id):
+        print(f"Thread started for movie {movie_id}")
+        payload = {"user_id": 101, "movie_id": movie_id}
+        r = requests.post("http://127.0.0.1:8001/watch", json=payload)
+        print(f"Thread finished for movie {movie_id}, status: {r.status_code}")
+        assert r.status_code == 200
 
-threads = []
-for mid in [201, 202, 203]:
-    t = threading.Thread(target=add_watch, args=(mid,))
-    threads.append(t)
-    t.start()
+    threads = []
+    for mid in [201, 202, 203]:
+        t = threading.Thread(target=add_watch, args=(mid,))
+        threads.append(t)
+        t.start()
 
-for t in threads:
-    t.join()
+    for t in threads:
+        t.join()
