@@ -86,7 +86,7 @@ def test_watch_extra_field():
     # FastAPI allows extra fields by default unless restricted
     assert response.status_code == 200
 
-
+@pytest.mark.performance
 def test_concurrent_watch_addition():
     responses = []
     
